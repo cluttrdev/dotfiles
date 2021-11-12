@@ -1,0 +1,12 @@
+
+pack/*
+!pack/.gitmodules
+
+backup/*
+conf/*
+swap/*
+undo/*
+
+
+!*.gitkeep
+
