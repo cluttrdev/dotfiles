@@ -1,0 +1,30 @@
+general {
+    output_format = "i3bar"
+    colors = true
+    interval = 5
+}
+
+order += "cpu_usage"
+order += "memory"
+order += "battery all"
+order += "tztime local"
+
+battery all {
+    format = "%status %percentage"
+    integer_battery_capacity = true
+    status_chr = ""
+    status_bat = ""
+    status_full = ""
+}
+
+cpu_usage {
+   format = " %usage"
+}
+ 
+memory {
+    format = "  %percentage_used"
+}
+
+tztime local {
+    format = " %Y-%m-%d  %H:%M"
+}
