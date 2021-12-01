@@ -1,6 +1,7 @@
 
 pack/*
 !pack/.gitmodules
+!pack/reconfigure_submodules.sh
 
 backup/*
 conf/*
