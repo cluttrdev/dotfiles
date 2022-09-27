@@ -36,7 +36,7 @@ set title            " Reflect file currently being edited
 " Color Configuration
 " -------------------
 
-colorscheme solarized  " Set color scheme
+"colorscheme solarized  " Set color scheme
 set background=dark    " Use colors that suit a dark background
 
 " ============================
@@ -60,7 +60,7 @@ set undodir=$HOME/.vim/undo//
 set autoindent              " New lines inherit indentation of previous lines
 filetype plugin indent on   " Smart auto indentation
 set tabstop=4               " Show existing tab with 4 spaces
-set shiftwidth=2            " Use 2 spaces when indenting
+set shiftwidth=4            " Use 4 spaces when indenting
 set expandtab               " Insert spaces instead of tab
 set nowrap                  " Do not wrap lines
 
@@ -79,6 +79,7 @@ set smartcase    " ... unless yout type a capital
 
 set encoding=utf-8    " Use an encoding the supports unicode
 set linebreak         " Wrap lines at convenient points
+set fixendofline      " restore EOL at end of file if missing
 set scrolloff=3       " Number of lines to keep above and below cursor
 " set sidescrolloff=5   " Number of columns to keep left and right of cursor
 syntax enable          " Enable syntax highlighting and set colors
@@ -101,13 +102,25 @@ let g:elite_mode=1    " Enable elite mode, i.e. no arrows!!!
 if get(g:, 'elite_mode')
   nnoremap <Up> :resize +2<CR>
   nnoremap <Down> :resize -2<CR>
-  nnoremap <Left> :vertical resize +2<CR>
-  nnoremap <Right> :vertical resize -2<CR>
+  nnoremap <Left> :vertical resize -2<CR>
+  nnoremap <Right> :vertical resize +2<CR>
 endif
 
 " ############
 " Key Mappings
 " ############
+
+" Enable Meta-Key mappings
+"for i in range(65,90) + range(97,122)
+"  let c = nr2char(i)
+"  exec "map \e".c." <M-".c.">"
+"  exec "map! \e".c." <M-".c.">"
+"endfor
+"set timeoutlen=1000
+"set ttimeoutlen=10
+
+" Exit insert mode
+inoremap qq <Esc>
 
 " Show next matched string at the center of the screen
 nnoremap n nzz
@@ -123,6 +136,12 @@ nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 
+nnoremap <M-h> :tabprevious<CR>
+nnoremap <M-l> :tabnext<CR>
+
+nnoremap <M-S-h> :tabm -1<CR>
+nnoremap <M-S-l> :tabm +1<CR>
+
 " Move visual selection
 vnoremap <C-J> :m '>+1<CR>gv=gv
 vnoremap <C-K> :m '<-2<CR>gv=gv
@@ -137,110 +156,185 @@ vnoremap <C-K> :m '<-2<CR>gv=gv
 
 " Open a terminal at the bottom
 if has('terminal')
-  :command Btrem botright terminal
+  :command Bterm execute "botright terminal ++rows=" . winheight('.') / 5
+  nnoremap <Leader>t :Bterm<CR>
 endif
 
 " ########
-" Packages
+" Plugins
 " ########
 
-" ======
-" Colors
-" ======
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+    silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
-" ---------
-" Solarized
-" ---------
-:packadd vim-colors-solarized
+call plug#begin()
 
-" ======
-" Syntax
-" ======
-
-" ---------------------------------
-" ALE - asynchronous linting engine
-" ---------------------------------
-source ~/.vim/conf/ale.vimrc
-
-" ---------------------------------------------------------------------
-" - JavaScript
-" ---------------------------------------------------------------------
-:packadd vim-javascript
-:packadd vim-jsx-pretty
-
-" =======
-" Plugins
-" =======
+" -----------------------------------
+" gruvbox - retro groove color scheme
+" -----------------------------------
+Plug 'https://github.com/morhetz/gruvbox'
 
 " --------------------------------------------
 " airline - lean & mean status/tabline for vim 
 " --------------------------------------------
-source ~/.vim/conf/airline.vimrc
+Plug 'https://github.com/vim-airline/vim-airline'
 
 " ---------------------------------
 " fzf - A command-line fuzzy finder
 " ---------------------------------
-source ~/.vim/conf/fzf.vimrc
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" Required
+" - width [float range [0 ~ 1]] or [integer range [8 ~ ]]
+" - height [float range [0 ~ 1]] or [integer range [4 ~ ]]
+"
+" Optional
+" - xoffset [float default 0.5 range [0 ~ 1]]
+" - yoffset [float default 0.5 range [0 ~ 1]]
+" - relative [boolean default v:false]
+" - border [string default 'rounded']: Border style
+"   - 'rounded' / 'sharp' / 'horizontal' / 'vertical' / 'top' / 'bottom' / 'left' / 'right'
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
+
+" Key Mappings
+
+" Find git tracked files
+nnoremap <silent> <Leader>ff :GFiles<CR>
+" Find all files
+nnoremap <silent> <Leader>fF :Files<CR>
+" Find open buffer
+nnoremap <silent> <Leader>fb :Buffers<CR>
+" Find buffer in history
+nnoremap <silent> <Leader>fB :History<CR>
+" Find tags in current buffer
+nnoremap <silent> <Leader>ft :BTags<CR>
+" Find tags across project
+nnoremap <silent> <Leader>fT :Tags<CR>
+" Find lines in current buffer
+nnoremap <silent> <Leader>fl :BLines<CR>
+" Find lines in loaded buffers
+nnoremap <silent> <Leader>fL :Lines<CR>
+" Find help
+nnoremap <silent> <Leader>fH :Helptags!<CR>
+" Find commands
+nnoremap <silent> <Leader>fC :Commands<CR>
+" Find key mappings
+nnoremap <silent> <Leader>fM :Maps<CR>
+
+" -------------------------------------
+" minimap - minimap / scrollbar for vim
+" -------------------------------------
+Plug 'https://github.com/wfxr/minimap.vim'
+
+let g:minimap_highlight_range = 1   " highlight range of visible lines
+
+nnoremap <C-M> :MinimapToggle<CR>
 
 " ---------------------------------------------------------------------
-" - gitgutter
+" vim-surround - Quoting/parenthesizing made simple
 " ---------------------------------------------------------------------
-:packadd vim-gitgutter
+"
+" cs<from><to>  change surrounding <from> to <to>
+" cst<to>       change surrounding tags to <to>
+"
+" ds<s>         delete surrounding <s>
+"
+" ys<motion><s> surround characters using motion
+"
+Plug 'https://github.com/tpope/vim-surround'
+
+" ---------------------------------------------------------------------
+" vim-repeat - enable repeating supported plugin maps with '.'
+" ---------------------------------------------------------------------
+Plug 'https://github.com/tpope/vim-repeat'
+
+" ---------------------------------------------------------------------
+" vim-unimpaired - Pairs of handy bracket mappings
+" ---------------------------------------------------------------------
+" 
+" [b, ]b    previous/next buffer
+" [B, ]B    first/last buffer
+" 
+" [a, ]a    previous/next argument
+" [A, ]A    first/last argument
+"
+" [<Space>, ]<Space>    insert line above/below
+" [e, ]e    exchange with previous/next line
+" [p, ]p    put above/below current line
+"
+Plug 'https://github.com/tpope/vim-unimpaired'
+
+" ---------------------------------------------------------------------
+" auto-pairs - insert or delete brackets, parens, quotes in pair
+" ---------------------------------------------------------------------
+"
+" <M-p>     toggle autopairs
+" <M-n>     jump to next closed pair
+"
+Plug 'https://github.com/jiangmiao/auto-pairs'
+
+" ---------------------------------------------------------------------
+" vim-ragtag - ghetto HTML/XML mappings
+" ---------------------------------------------------------------------
+"
+" The table below shows what happens if the binding is pressed on the 
+" end of a line consisting of "foo".
+"
+" Mapping       Changed to (cursor = ^)
+" <C-X><Space>  <foo>^</foo>
+" <C-X><CR>     <foo>\n^\n</foo>
+" <C-X>/        Last HTML tag closed
+"
+Plug 'https://github.com/tpope/vim-ragtag'
+
+" ---------------------------------------------------------------------
+" NERDTree - A tree explorer
+" ---------------------------------------------------------------------
+Plug 'https://github.com/preservim/nerdtree'
+
+" If another buffer tries to replace NERDTree, put it in the other window, and bring back NERDTree.
+"autocmd BufEnter * if bufname('#') =~ 'NERD_tree_\d\+' && bufname('%') !~ 'NERD_tree_\d\+' && winnr('$') > 1 |
+"    \ let buf=bufnr() | buffer# | execute "normal! \<C-W>w" | execute 'buffer'.buf | endif
+
+" Open the existing NERDTree on each new tab.
+autocmd BufWinEnter * if getcmdwintype() == '' | silent NERDTreeMirror | endif
+
+" Mirror the NERDTree before showing it. 
+" This makes it the same on all tabs.
+nnoremap <Leader>p :NERDTreeMirror<CR>:NERDTreeFocus<CR>
+
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" Close tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+" ---------------------------------------------------------------------
+" vim-alternate - Quickly switch between alternate files
+" ---------------------------------------------------------------------
+Plug 'https://github.com/ton/vim-alternate'
+
+" ---------------------------------------------------------------------
+" nerdtree-git-plugin - shows git status flags for files and folders
+" ---------------------------------------------------------------------
+Plug 'https://github.com/Xuyuanp/nerdtree-git-plugin'
+
+" ---------------------------------------------------------------------
+" gitgutter - shows git diff markers in the sign column
+" ---------------------------------------------------------------------
+Plug 'https://github.com/airblade/vim-gitgutter'
 
 " set background color of sign column to general background color
 let g:gitgutter_override_sign_column_highlight=0
-highlight SignColumn guibg=bg
-highlight SignColumn ctermbg=bg
+"highlight SignColumn guibg=bg
+"highlight SignColumn ctermbg=bg
 
-" --------
-" NERDTree
-" --------
-source ~/.vim/conf/nerdtree.vimrc
+call plug#end()
 
-" ------------------------------------------------------
-" vim-alternate - Quickly switch between alternate files
-" ------------------------------------------------------
-:packadd vim-alternate
+" https://github.com/morhetz/gruvbox/wiki/Installation
+autocmd vimenter * ++nested colorscheme gruvbox
 
-" --------------------------------------------------
-" vim-auto-save - Automatically save changes to disk
-" --------------------------------------------------
-:packadd vim-auto-save
-
-" -------------------------------------------------
-" vim-surround - Quoting/parenthesizing made simple
-" -------------------------------------------------
-:packadd vim-surround
-
-" ------------------------------------------------
-" vim-unimpaired - Pairs of handy bracket mappings
-" ------------------------------------------------
-:packadd vim-unimpaired
-
-" ------------------------------------------------------------
-" vim-repeat - enable repeating supported plugin maps with '.'
-" ------------------------------------------------------------
-:packadd vim-repeat
-
-" ---------------------------------------------------------------------
-" - auto-pairs
-" ---------------------------------------------------------------------
-:packadd auto-pairs
-
-" vim-cmake - working with CMake projects
-source ~/.vim/conf/vim-cmake.vimrc
-
-" ---------------------------------------------------------------------
-" - coc.nvim
-" ---------------------------------------------------------------------
-:packadd coc.nvim
-
-" ---------------------------------------------------------------------
-" - vim-markdown-preview
-" ---------------------------------------------------------------------
-source ~/.vim/conf/vim-markdown-preview.vimrc
-
-" ---------------------------------------------------------------------
-" - vim-terraform
-" ---------------------------------------------------------------------
-:packadd vim-terraform
