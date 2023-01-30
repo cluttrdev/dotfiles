@@ -1,0 +1,146 @@
+/* =============================================================================
+ *
+ * Waybar configuration
+ *
+ * Based on: https://github.com/robertjk/dotfiles/blob/253b864/.config/waybar/style.css
+ *
+ * Configuration reference: https://github.com/Alexays/Waybar/wiki/Configuration
+ *
+ * =========================================================================== */
+
+@import "gruvbox.css";
+
+/* -----------------------------------------------------------------------------
+ * Base styles
+ * -------------------------------------------------------------------------- */
+
+/* Reset all styles */
+* {
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* The whole bar */
+#waybar {
+    background: @gruvbox_dark0;
+    color: @gruvbox_light1;
+    font-family: Cantarell, Noto Sans, sans-serif;
+    font-size: 13px;
+}
+
+/* Each module */
+#battery,
+#clock,
+#cpu,
+#memory,
+#mode,
+#network,
+#pulseaudio,
+#temperature,
+#tray {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+/* -----------------------------------------------------------------------------
+ * Module styles
+ * -------------------------------------------------------------------------- */
+
+#battery.warning {
+    color: @gruvbox_bright_orange;
+}
+
+#battery.critical {
+    color: @gruvbox_bright_red;
+}
+
+#clock {
+    font-weight: bold;
+}
+
+#cpu {
+  /* No styles */
+}
+
+#cpu.warning {
+    color: @gruvbox_bright_orange;
+}
+
+#cpu.critical {
+    color: @gruvbox_bright_red;
+}
+
+#memory.warning {
+    color: @gruvbox_bright_orange;
+}
+
+#memory.critical {
+    color: @gruvbox_bright_red;
+}
+
+#mode {
+    background: @gruvbox_dark2;
+    border-top: 2px solid @gruvbox_gray;
+    /* To compensate for the top border and still have vertical centering */
+    padding-bottom: 2px;
+}
+
+#network {
+    /* No styles */
+}
+
+#network.disconnected {
+    color: @gruvbox_bright_orange;
+}
+
+#pulseaudio {
+    /* No styles */
+}
+
+#pulseaudio.muted {
+    /* No styles */
+}
+
+#temperature {
+    /* No styles */
+}
+
+#temperature.critical {
+    color: @gruvbox_bright_red;
+}
+
+#tray {
+    /* No styles */
+}
+
+#window {
+    font-weight: bold;
+}
+
+#workspaces button {
+    border-top: 2px solid transparent;
+    /* To compensate for the top border and still have vertical centering */
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: @gruvbox_light4;
+}
+
+#workspaces button.visible:not(.focused) {
+    border-color: @gruvbox_gray;
+}
+
+#workspaces button.focused {
+    border-color: #2dc07b;
+    color: @gruvbox_light0;
+    background-color: #186742;
+}
+
+#workspaces button.urgent {
+    border-color: @gruvbox_neutral_red;
+    color: @gruvbox_neutral_red;
+}
