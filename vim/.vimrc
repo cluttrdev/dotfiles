@@ -36,7 +36,6 @@ set title            " Reflect file currently being edited
 " Color Configuration
 " -------------------
 
-"colorscheme solarized  " Set color scheme
 set background=dark    " Use colors that suit a dark background
 
 " ============================
@@ -225,12 +224,24 @@ nnoremap <silent> <Leader>fC :Commands<CR>
 " Find key mappings
 nnoremap <silent> <Leader>fM :Maps<CR>
 
+" --------------------------------
+" easy-align - an alignment plugin
+" --------------------------------
+Plug 'https://github.com/junegunn/vim-easy-align'
+
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
 " -------------------------------------
 " minimap - minimap / scrollbar for vim
 " -------------------------------------
 Plug 'https://github.com/wfxr/minimap.vim'
 
-let g:minimap_highlight_range = 1   " highlight range of visible lines
+" highlight range of visible lines
+let g:minimap_highlight_range = 1
 
 nnoremap <C-M> :MinimapToggle<CR>
 
@@ -278,20 +289,6 @@ Plug 'https://github.com/tpope/vim-unimpaired'
 Plug 'https://github.com/jiangmiao/auto-pairs'
 
 " ---------------------------------------------------------------------
-" vim-ragtag - ghetto HTML/XML mappings
-" ---------------------------------------------------------------------
-"
-" The table below shows what happens if the binding is pressed on the 
-" end of a line consisting of "foo".
-"
-" Mapping       Changed to (cursor = ^)
-" <C-X><Space>  <foo>^</foo>
-" <C-X><CR>     <foo>\n^\n</foo>
-" <C-X>/        Last HTML tag closed
-"
-Plug 'https://github.com/tpope/vim-ragtag'
-
-" ---------------------------------------------------------------------
 " NERDTree - A tree explorer
 " ---------------------------------------------------------------------
 Plug 'https://github.com/preservim/nerdtree'
@@ -314,11 +311,6 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
 " ---------------------------------------------------------------------
-" vim-alternate - Quickly switch between alternate files
-" ---------------------------------------------------------------------
-Plug 'https://github.com/ton/vim-alternate'
-
-" ---------------------------------------------------------------------
 " nerdtree-git-plugin - shows git status flags for files and folders
 " ---------------------------------------------------------------------
 Plug 'https://github.com/Xuyuanp/nerdtree-git-plugin'
@@ -332,6 +324,146 @@ Plug 'https://github.com/airblade/vim-gitgutter'
 let g:gitgutter_override_sign_column_highlight=0
 "highlight SignColumn guibg=bg
 "highlight SignColumn ctermbg=bg
+
+" ---------------------------------------------------------------------
+" vim-ragtag - ghetto HTML/XML mappings
+" ---------------------------------------------------------------------
+"
+" The table below shows what happens if the binding is pressed on the 
+" end of a line consisting of "foo".
+"
+" Mapping       Changed to (cursor = ^)
+" <C-X><Space>  <foo>^</foo>
+" <C-X><CR>     <foo>\n^\n</foo>
+" <C-X>/        Last HTML tag closed
+"
+Plug 'https://github.com/tpope/vim-ragtag'
+
+" ---------------------------------------------------------------------
+" vim-go - go development plugin
+" ---------------------------------------------------------------------
+Plug 'https://github.com/fatih/vim-go'
+
+let g:go_code_completion_enabled = 1
+
+" ---------------------------------------------------------------------
+" vim-terraform - basic vim/terraform integration
+" ---------------------------------------------------------------------
+Plug 'https://github.com/hashivim/vim-terraform'
+
+" ---------------------------------------------------------------------
+" vim-css-color - preview colours in source code while editing
+" ---------------------------------------------------------------------
+Plug 'https://github.com/ap/vim-css-color'
+
+" ---------------------------------------------------------------------
+" vim-alternate - Quickly switch between alternate files
+" ---------------------------------------------------------------------
+Plug 'https://github.com/ton/vim-alternate'
+
+" ---------------------------------------------------------------------
+" vim-lsp - async language server protocol plugin
+" ---------------------------------------------------------------------
+Plug 'https://github.com/prabirshrestha/vim-lsp'
+
+" ---------------------------------------------------------------------
+" asyncomplete.vim - async completion in pure vim script
+" ---------------------------------------------------------------------
+Plug 'https://github.com/prabirshrestha/asyncomplete.vim'
+
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
+
+" ---------------------------------------------------------------------
+" asyncomplete-lsp.vim - lsp source for asyncomplete.vim vim-lsp
+" ---------------------------------------------------------------------
+Plug 'https://github.com/prabirshrestha/asyncomplete-lsp.vim'
+
+if executable('bash-language-server')
+	" npm install bash-language-server
+	augroup LspBash
+		autocmd!
+		autocmd User lsp_setup call lsp#register_server({
+					\ 'name': 'bash-language-server',
+					\ 'cmd': {server_info->[&shell, &shellcmdflag, 'bash-language-server start']},
+					\ 'allowlist': ['sh'],
+					\ })
+	augroup END
+endif
+if executable('pylsp')
+    " pip install ruff ruff-lsp  # requires rust>=1.64
+    au User lsp_setup call lsp#register_server({
+                \ 'name': 'pylsp',
+                \ 'cmd': {server_info->['pylsp']},
+                \ 'allowlist': ['python'],
+                \ })
+endif
+if executable('gopls')
+    " go install golang.org/x/tools/gopls@latest
+    au User lsp_setup call lsp#register_server({
+                \ 'name': 'gopls',
+                \ 'cmd': {server_info->['gopls', '-remote=auto']},
+                \ 'allowlist': ['go'],
+                \ })
+
+    autocmd BufWritePre *.go LspDocumentFormatSync
+endif
+if executable('html-languageserver')
+	" npm install vscode-html-languageserver-bin
+	au User lsp_setup call lsp#register_server({
+				\ 'name': 'html-languageserver',
+				\ 'cmd': {server_info->[&shell, &shellcmdflag, 'html-languageserver --stdio']},
+				\ 'whitelist': ['html'],
+				\ })
+endif
+if executable('css-languageserver')
+	" npm install vscode-css-languageserver-bin
+	au User lsp_setup call lsp#register_server({
+				\ 'name': 'css-languageserver',
+				\ 'cmd': {server_info->[&shell, &shellcmdflag, 'css-languageserver --stdio']},
+				\ 'whitelist': ['css', 'less', 'sass', 'scss'],
+				\ })
+endif
+if executable('typescript-language-server')
+	" npm install typescript typescript-language-server
+	au User lsp_setup call lsp#register_server({
+				\ 'name': 'javascript support using typescript-language-server',
+				\ 'cmd': { server_info->[&shell, &shellcmdflag, 'typescript-language-server --stdio']},
+				\ 'root_uri': { server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git/..'))},
+				\ 'whitelist': ['javascript', 'javascript.jsx', 'javascriptreact']
+				\ })
+endif
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    nmap <buffer> K <plug>(lsp-hover)
+    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
 
 call plug#end()
 
