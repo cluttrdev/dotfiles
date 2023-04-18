@@ -1,0 +1,10 @@
+# see: /usr/share/doc/alacritty/example/alacritty.yml
+
+# Font configuration
+font:
+  size: 8
+
+# Color configuration
+import:
+  - ~/.config/alacritty/colors/gruvbox_dark.yml
+  # - ~/.config/alacritty/colors/gruvbox_light.yml
