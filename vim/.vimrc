@@ -199,30 +199,47 @@ Plug 'junegunn/fzf.vim'
 "   - 'rounded' / 'sharp' / 'horizontal' / 'vertical' / 'top' / 'bottom' / 'left' / 'right'
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 
+let g:fzf_preview_window = ['right,50%', 'ctrl-/']
+
+let g:fzf_command_prefix = 'Fzf'
+
+" Customize commands
+
+command!      -bang -nargs=? -complete=dir    FzfFiles   call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview({ 'options': ['--bind=alt-j:preview-down,alt-k:preview-up,alt-l:preview-half-page-down,alt-h:preview-half-page-up'] }), <bang>0)
+command!      -bang -nargs=? -complete=dir    FzfGFiles  call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview({ 'options': ['--bind=alt-j:preview-down,alt-k:preview-up,alt-l:preview-half-page-down,alt-h:preview-half-page-up'] }), <bang>0)
+command! -bar -bang -nargs=? -complete=buffer FzfBuffers call fzf#vim#buffers(<q-args>, fzf#vim#with_preview({ "placeholder": "{1}", 'options': ['--bind=alt-j:preview-down,alt-k:preview-up,alt-l:preview-half-page-down,alt-h:preview-half-page-up'] }), <bang>0)
+
 " Key Mappings
 
 " Find git tracked files
-nnoremap <silent> <Leader>ff :GFiles<CR>
+nnoremap <silent> <Leader>ff :FzfGFiles<CR>
 " Find all files
-nnoremap <silent> <Leader>fF :Files<CR>
+nnoremap <silent> <Leader>fF :FzfFiles<CR>
 " Find open buffer
-nnoremap <silent> <Leader>fb :Buffers<CR>
+nnoremap <silent> <Leader>fb :FzfBuffers<CR>
 " Find buffer in history
-nnoremap <silent> <Leader>fB :History<CR>
+nnoremap <silent> <Leader>fB :FzfHistory<CR>
 " Find tags in current buffer
-nnoremap <silent> <Leader>ft :BTags<CR>
+nnoremap <silent> <Leader>ft :FzfBTags<CR>
 " Find tags across project
-nnoremap <silent> <Leader>fT :Tags<CR>
+nnoremap <silent> <Leader>fT :FzfTags<CR>
 " Find lines in current buffer
-nnoremap <silent> <Leader>fl :BLines<CR>
+nnoremap <silent> <Leader>fl :FzfBLines<CR>
 " Find lines in loaded buffers
-nnoremap <silent> <Leader>fL :Lines<CR>
+nnoremap <silent> <Leader>fL :FzfLines<CR>
+" Find pattern in files
+nnoremap <silent> <Leader>fp :FzfRg<CR>
 " Find help
-nnoremap <silent> <Leader>fH :Helptags!<CR>
+nnoremap <silent> <Leader>fH :FzfHelptags!<CR>
 " Find commands
-nnoremap <silent> <Leader>fC :Commands<CR>
+nnoremap <silent> <Leader>fC :FzfCommands<CR>
 " Find key mappings
-nnoremap <silent> <Leader>fM :Maps<CR>
+nnoremap <silent> <Leader>fM :FzfMaps<CR>
+
+" ------------------------------------------------
+" any-jump - Jump to any definition and references
+" ------------------------------------------------
+Plug 'https://github.com/pechorin/any-jump.vim'
 
 " --------------------------------
 " easy-align - an alignment plugin
@@ -326,6 +343,25 @@ let g:gitgutter_override_sign_column_highlight=0
 "highlight SignColumn ctermbg=bg
 
 " ---------------------------------------------------------------------
+" indentLine - display the indention levels with thin vertical lines 
+" ---------------------------------------------------------------------
+Plug 'https://github.com/Yggdroot/indentLine'
+
+" disable by default
+let g:indentLine_enabled = 0
+
+" =====================================================================
+" Language/File Type Specific
+" =====================================================================
+
+" YAML
+autocmd FileType yaml setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+
+Plug 'https://github.com/pedrohdz/vim-yaml-folds'
+
+set foldlevelstart=16
+
+" ---------------------------------------------------------------------
 " vim-ragtag - ghetto HTML/XML mappings
 " ---------------------------------------------------------------------
 "
@@ -367,6 +403,11 @@ Plug 'https://github.com/ton/vim-alternate'
 Plug 'https://github.com/prabirshrestha/vim-lsp'
 
 " ---------------------------------------------------------------------
+" vim-lsp-settings - Auto configurations for vim-lsp Language Servers
+" ---------------------------------------------------------------------
+Plug 'https://github.com/mattn/vim-lsp-settings'
+
+" ---------------------------------------------------------------------
 " asyncomplete.vim - async completion in pure vim script
 " ---------------------------------------------------------------------
 Plug 'https://github.com/prabirshrestha/asyncomplete.vim'
@@ -380,60 +421,17 @@ inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
 " ---------------------------------------------------------------------
 Plug 'https://github.com/prabirshrestha/asyncomplete-lsp.vim'
 
-if executable('bash-language-server')
-	" npm install bash-language-server
-	augroup LspBash
-		autocmd!
-		autocmd User lsp_setup call lsp#register_server({
-					\ 'name': 'bash-language-server',
-					\ 'cmd': {server_info->[&shell, &shellcmdflag, 'bash-language-server start']},
-					\ 'allowlist': ['sh'],
-					\ })
-	augroup END
-endif
-if executable('pylsp')
-    " pip install ruff ruff-lsp  # requires rust>=1.64
-    au User lsp_setup call lsp#register_server({
-                \ 'name': 'pylsp',
-                \ 'cmd': {server_info->['pylsp']},
-                \ 'allowlist': ['python'],
-                \ })
-endif
-if executable('gopls')
-    " go install golang.org/x/tools/gopls@latest
-    au User lsp_setup call lsp#register_server({
-                \ 'name': 'gopls',
-                \ 'cmd': {server_info->['gopls', '-remote=auto']},
-                \ 'allowlist': ['go'],
-                \ })
 
-    autocmd BufWritePre *.go LspDocumentFormatSync
-endif
-if executable('html-languageserver')
-	" npm install vscode-html-languageserver-bin
-	au User lsp_setup call lsp#register_server({
-				\ 'name': 'html-languageserver',
-				\ 'cmd': {server_info->[&shell, &shellcmdflag, 'html-languageserver --stdio']},
-				\ 'whitelist': ['html'],
-				\ })
-endif
-if executable('css-languageserver')
-	" npm install vscode-css-languageserver-bin
-	au User lsp_setup call lsp#register_server({
-				\ 'name': 'css-languageserver',
-				\ 'cmd': {server_info->[&shell, &shellcmdflag, 'css-languageserver --stdio']},
-				\ 'whitelist': ['css', 'less', 'sass', 'scss'],
-				\ })
-endif
-if executable('typescript-language-server')
-	" npm install typescript typescript-language-server
-	au User lsp_setup call lsp#register_server({
-				\ 'name': 'javascript support using typescript-language-server',
-				\ 'cmd': { server_info->[&shell, &shellcmdflag, 'typescript-language-server --stdio']},
-				\ 'root_uri': { server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_directory(lsp#utils#get_buffer_path(), '.git/..'))},
-				\ 'whitelist': ['javascript', 'javascript.jsx', 'javascriptreact']
-				\ })
-endif
+" Keep focus in current window instead of moving to preview
+let g:lsp_preview_keep_focus = 1
+
+" Enable echo of diagnostic error for current line to status
+let g:lsp_diagnostics_echo_cursor = 1
+" Delay milliseconds to echo diagnostics error to status
+let g:lsp_diagnostics_echo_delay = 100
+
+" Disable virtual text shown next to diagnostic error
+let g:lsp_diagnostics_virtual_text_enabled = 0
 
 function! s:on_lsp_buffer_enabled() abort
     setlocal omnifunc=lsp#complete
