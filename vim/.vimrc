@@ -88,8 +88,10 @@ syntax enable          " Enable syntax highlighting and set colors
 " =====================
 
 set confirm       " Confirm closing an unsaved file
-set nomodeline    " Ignore file's mode lines; use vimrc config instead
+"set nomodeline    " Ignore file's mode lines; use vimrc config instead
 "set spell         " Enable spell checking
+set splitright
+set splitbelow
 
 " ----------
 " Elite Mode
@@ -125,15 +127,12 @@ inoremap qq <Esc>
 nnoremap n nzz
 nnoremap N Nzz
 
-" Make cycling through buffers more effective
-"map <C-K> :bprev<CR>
-"map <C-J> :bnext<CR>
+" When arrow keys are needed
+nnoremap <C-h> <Left>
+nnoremap <C-j> <Down>
+nnoremap <C-k> <Up>
+nnoremap <C-l> <Right>
 
-" Switching windows
-nnoremap <C-H> <C-W><C-H>
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
 
 nnoremap <M-h> :tabprevious<CR>
 nnoremap <M-l> :tabnext<CR>
@@ -157,6 +156,14 @@ vnoremap <C-K> :m '<-2<CR>gv=gv
 if has('terminal')
   :command Bterm execute "botright terminal ++rows=" . winheight('.') / 5
   nnoremap <Leader>t :Bterm<CR>
+
+  augroup terminal
+      autocmd!
+      " Do not auto-resize terminal window
+      autocmd TerminalWinOpen * set winfixheight
+      " Skip terminal when switching buffers
+      "autocmd TerminalOpen * set nobuflisted
+  augroup END
 endif
 
 " ########
@@ -361,6 +368,12 @@ Plug 'https://github.com/pedrohdz/vim-yaml-folds'
 
 set foldlevelstart=16
 
+" Python
+
+Plug 'https://github.com/psf/black', { 'tag': '*.*.*' }
+
+let g:black_virtualenv = '~/.local/share/vim-black'
+
 " ---------------------------------------------------------------------
 " vim-ragtag - ghetto HTML/XML mappings
 " ---------------------------------------------------------------------
@@ -447,8 +460,6 @@ function! s:on_lsp_buffer_enabled() abort
     nmap <buffer> [g <plug>(lsp-previous-diagnostic)
     nmap <buffer> ]g <plug>(lsp-next-diagnostic)
     nmap <buffer> K <plug>(lsp-hover)
-    nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
 
     let g:lsp_format_sync_timeout = 1000
     autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
