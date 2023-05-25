@@ -16,4 +16,3 @@ vim.keymap.set("n", "<leader>fB", telescope_builtin.oldfiles)
 vim.keymap.set("n", "<leader>fp", telescope_builtin.grep_string)
 vim.keymap.set("n", "<leader>fP", telescope_builtin.live_grep)
 
-require("telescope").load_extension("file_browser")

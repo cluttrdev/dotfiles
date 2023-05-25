@@ -16,50 +16,71 @@ local packer_bootstrap = ensure_packer()
 return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
 
-  -- [[ Plugins ]]
+  -- [[ Appearance ]]
 
-  -- Colorscheme
   use { 'ellisonleao/gruvbox.nvim' }
 
-  -- Telescope
+  use { "nvim-lualine/lualine.nvim" }
+
+  use { 
+      'akinsho/bufferline.nvim', tag = "v4.*",
+      requires = 'nvim-tree/nvim-web-devicons'
+  }
+
+  -- [[ General Purpose ]]
+
+  use { 'mbbill/undotree' }
+
+  use { "junegunn/vim-easy-align" }
+
+  -- [[ Navigation ]]
+
   use {
       'nvim-telescope/telescope.nvim', tag = '0.1.1',
       -- or                            , branch = '0.1.x',
       requires = { {'nvim-lua/plenary.nvim'} }
   }
-  use {
-      "nvim-telescope/telescope-file-browser.nvim",
-      requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" }
-  }
- 
-  -- Treesitter
-  use {
-      'nvim-treesitter/nvim-treesitter',
-      run = ':TSUpdate'
-  }
 
-  -- Undotree
-  use { 'mbbill/undotree' }
+  -- [[ Completion ]]
 
-  -- Git
-  use { 'tpope/vim-fugitive' }
-
-  -- ToggleTerm
-  use { "akinsho/toggleterm.nvim", tag = "v2.*" }
-
-  -- LSP
-  use {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "neovim/nvim-lspconfig",
-      run = ":MasonUpdate" -- update registry contents
-  }
   use { 
       "hrsh7th/nvim-cmp",
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/vim-vsnip",
       "hrsh7th/cmp-vsnip",
   }
+
+  use { 
+      "windwp/nvim-autopairs",
+      "windwp/nvim-ts-autotag",
+  }
+
+  use { "tpope/vim-surround" }
+
+  -- [[ Language Support ]]
+ 
+  use {
+      'nvim-treesitter/nvim-treesitter',
+      run = ':TSUpdate'
+  }
+
+  use {
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
+      "neovim/nvim-lspconfig",
+      run = ":MasonUpdate" -- update registry contents
+  }
+
+  use { "numToStr/Comment.nvim" }
+
+  -- [[ Miscellaneous ]]
+
+  use { 'tpope/vim-fugitive' }
+  use { "airblade/vim-gitgutter" }
+
+  use { "akinsho/toggleterm.nvim", tag = "v2.*" }
+
+  use { "nvim-tree/nvim-tree.lua" }
 
 
   -- Automatically set up your configuration after cloning packer.nvim
