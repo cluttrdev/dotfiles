@@ -22,7 +22,7 @@ return require('packer').startup(function(use)
 
   use { "nvim-lualine/lualine.nvim" }
 
-  use { 
+  use {
       'akinsho/bufferline.nvim', tag = "v4.*",
       requires = 'nvim-tree/nvim-web-devicons'
   }
@@ -43,14 +43,14 @@ return require('packer').startup(function(use)
 
   -- [[ Completion ]]
 
-  use { 
+  use {
       "hrsh7th/nvim-cmp",
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/vim-vsnip",
       "hrsh7th/cmp-vsnip",
   }
 
-  use { 
+  use {
       "windwp/nvim-autopairs",
       "windwp/nvim-ts-autotag",
   }
@@ -58,7 +58,7 @@ return require('packer').startup(function(use)
   use { "tpope/vim-surround" }
 
   -- [[ Language Support ]]
- 
+
   use {
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate'
@@ -73,15 +73,19 @@ return require('packer').startup(function(use)
 
   use { "numToStr/Comment.nvim" }
 
-  -- [[ Miscellaneous ]]
+  -- [[ Git Integration ]]
 
   use { 'tpope/vim-fugitive' }
-  use { "airblade/vim-gitgutter" }
+  use { 'lewis6991/gitsigns.nvim', tag = 'release' }
+
+  -- [[ Miscellaneous ]]
 
   use { "akinsho/toggleterm.nvim", tag = "v2.*" }
 
   use { "nvim-tree/nvim-tree.lua" }
 
+
+  use { "pedrohdz/vim-yaml-folds" }
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins

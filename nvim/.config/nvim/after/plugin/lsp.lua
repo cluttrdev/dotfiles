@@ -36,6 +36,9 @@ local lsp_attach = function(client, bufnr)
     vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
     vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
     vim.keymap.set({"n", "i"}, "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+
+    -- Disable semantic highlighting (results in errors for omnisharp (only?))
+    client.server_capabilities.semanticTokensProvider = nil
 end
 
 local lspconfig = require("lspconfig")
@@ -46,4 +49,9 @@ require("mason-lspconfig").setup_handlers({
             capabilities = lsp_capabilities,
         })
     end,
+})
+
+vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
+    pattern = "*/templates/*.yaml,*/templates/*.tpl",
+    callback = function() vim.opt_local.filetype = "helm" end
 })

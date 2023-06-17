@@ -41,3 +41,14 @@ require'nvim-treesitter.configs'.setup {
         additional_vim_regex_highlighting = false,
     },
 }
+
+-- let treesitter handle folding
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+
+-- circumvent all folds being closed per default
+vim.api.nvim_create_autocmd({"BufReadPost", "FileReadPost"}, {
+    pattern = "*",
+    command = "normal zR",
+})
+

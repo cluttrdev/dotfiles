@@ -1,5 +1,7 @@
 --[[ opts.lua ]]
 
+local vim = vim
+
 -- [[ Context ]]
 vim.opt.number = true                -- bool: Show line numbers
 vim.opt.relativenumber = true        -- bool: Show relative line numbers
@@ -15,6 +17,7 @@ vim.opt.fileencoding = 'utf8'        -- str:  File encoding to use
 -- [[ Theme ]]
 vim.opt.syntax = "ON"                -- str:  Allow syntax highlighting
 vim.opt.termguicolors = true         -- bool: If term supports ui color then enable
+vim.opt.guicursor = ""
 
 -- [[ Search ]]
 vim.opt.ignorecase = true            -- bool: Ignore case in search patterns
@@ -30,7 +33,7 @@ vim.opt.expandtab = true             -- bool: Use spaces instead of tabs
 vim.opt.fixendofline = true          -- bool: Restore EOL at end of file if missing
 
 -- [[ Text Display ]]
-vim.opt.wrap = true                  -- bool: Wrap lines longer than width of window
+vim.opt.wrap = false                 -- bool: Wrap lines longer than width of window
 vim.opt.linebreak = true             -- bool: Wrap lines at character in 'breakat'
 vim.opt.breakindent = true           -- bool: Wrapped lines continue visually indented
 vim.opt.showbreak = "> "             -- str:  String to put at start of wrapped lines
