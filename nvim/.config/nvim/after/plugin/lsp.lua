@@ -6,7 +6,7 @@ require("mason-lspconfig").setup({
         "bashls",
         "bufls",
         -- "clangd",
-        "omnisharp",
+        "csharp_ls",
         "cssls",
         "dockerls",
         "gopls",
