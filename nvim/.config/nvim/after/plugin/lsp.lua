@@ -1,3 +1,8 @@
+vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
+    pattern = "*/templates/*.yaml,*/templates/*.tpl",
+    callback = function() vim.opt_local.filetype = "helm" end
+})
+
 require("mason").setup()
 
 require("mason-lspconfig").setup({
@@ -6,7 +11,7 @@ require("mason-lspconfig").setup({
         "bashls",
         "bufls",
         -- "clangd",
-        "csharp_ls",
+        -- "csharp_ls",
         "cssls",
         "dockerls",
         "gopls",
@@ -14,12 +19,13 @@ require("mason-lspconfig").setup({
         -- "helm_ls",
         "jsonls",
         "tsserver",
-        -- "lua_ls",
+        "lua_ls",
         "marksman",
-        "pylsp",
         "terraformls",
         "yamlls",
-    }
+    },
+
+    automatic_installation = true,
 })
 
 local lsp_capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -37,21 +43,71 @@ local lsp_attach = function(client, bufnr)
     vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
     vim.keymap.set({"n", "i"}, "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 
-    -- Disable semantic highlighting (results in errors for omnisharp (only?))
-    client.server_capabilities.semanticTokensProvider = nil
+    if client.supports_method("textDocument/formatting") then
+        vim.keymap.set("n", "gf", function() vim.lsp.buf.format() end, opts)
+    end
 end
 
 local lspconfig = require("lspconfig")
-require("mason-lspconfig").setup_handlers({
-    function(server_name)
-        lspconfig[server_name].setup({
-            on_attach = lsp_attach,
-            capabilities = lsp_capabilities,
-        })
+
+local servers_with_default_config = {
+    "ansiblels",
+    "bashls",
+    "bufls",
+    -- "clangd",
+    "csharp_ls",
+    "cssls",
+    "dockerls",
+    "gopls",
+    "html",
+    -- "helm_ls",
+    "jsonls",
+    "tsserver",
+    "marksman",
+    "terraformls",
+    "yamlls",
+}
+
+for _, server_name in ipairs(servers_with_default_config) do
+    lspconfig[server_name].setup({
+        on_attach = lsp_attach,
+        capabilities = lsp_capabilities,
+    })
+end
+
+lspconfig["csharp_ls"].setup({
+    on_attach = function(client, bufnr)
+        lsp_attach(client, bufnr)
+
+        -- Disable semantic highlighting (results in errors for omnisharp (only?))
+        client.server_capabilities.semanticTokensProvider = nil
     end,
+    capabilities = lsp_capabilities,
 })
 
-vim.api.nvim_create_autocmd({"BufNewFile", "BufRead"}, {
-    pattern = "*/templates/*.yaml,*/templates/*.tpl",
-    callback = function() vim.opt_local.filetype = "helm" end
+lspconfig["lua_ls"].setup({
+    on_attach = lsp_attach,
+    capabilities = lsp_capabilities,
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { "vim" },
+            },
+        },
+    },
 })
+
+lspconfig["pyright"].setup({
+    on_attach = lsp_attach,
+    capabilities = lsp_capabilities,
+    settings = {
+        python = {
+            analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "workspace",
+                useLibraryCodeForTypes = true
+            }
+        }
+    },
+})
+

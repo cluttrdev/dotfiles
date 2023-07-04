@@ -40,11 +40,16 @@ require'nvim-treesitter.configs'.setup {
         -- Instead of true it can also be a list of languages
         additional_vim_regex_highlighting = false,
     },
+
+    indent = {
+        enable = true,
+    },
 }
 
--- let treesitter handle folding
+-- let treesitter handle folding and indentation
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.indentexpr = "nvim_treesitter#indent()"
 
 -- circumvent all folds being closed per default
 vim.api.nvim_create_autocmd({"BufReadPost", "FileReadPost"}, {

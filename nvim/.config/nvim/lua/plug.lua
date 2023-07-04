@@ -71,6 +71,11 @@ return require('packer').startup(function(use)
       run = ":MasonUpdate" -- update registry contents
   }
 
+  use {
+      "jose-elias-alvarez/null-ls.nvim",
+      "jay-babu/mason-null-ls.nvim",
+  }
+
   use { "numToStr/Comment.nvim" }
 
   -- [[ Git Integration ]]
