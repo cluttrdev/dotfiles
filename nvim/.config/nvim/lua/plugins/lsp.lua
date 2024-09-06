@@ -37,6 +37,8 @@ return {
       dependencies = {
          "williamboman/mason.nvim",
          "williamboman/mason-lspconfig.nvim",
+         --
+         "towolf/vim-helm"  -- syntax highlighting
       },
       config = function()
          -- It's important that you set up the plugins in this order:
@@ -54,6 +56,7 @@ return {
          local lspconfig = require("lspconfig")
          lspconfig.bashls.setup({})
          lspconfig.gopls.setup({})
+         lspconfig.helm_ls.setup({})
          lspconfig.lua_ls.setup(M.setups.lua_ls)
          lspconfig.ruff.setup({})
 
@@ -72,6 +75,7 @@ return {
                vim.keymap.set("n", "<leader>la", function() vim.lsp.buf.code_action() end, opts)
                vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
                vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
+               vim.keymap.set("n", "<leader>le", function() vim.lsp.diagnostic.open_float() end, opts)
                vim.keymap.set({ "n", "i" }, "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 
                local client = vim.lsp.get_client_by_id(args.data.client_id)
