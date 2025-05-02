@@ -55,10 +55,15 @@ return {
 
          local lspconfig = require("lspconfig")
          lspconfig.bashls.setup({})
+         lspconfig.clangd.setup({})
+         lspconfig.csharp_ls.setup({})
          lspconfig.gopls.setup({})
+         lspconfig.graphql.setup({})
          lspconfig.helm_ls.setup({})
+         lspconfig.html.setup({})
          lspconfig.lua_ls.setup(M.setups.lua_ls)
          lspconfig.ruff.setup({})
+         lspconfig.pyright.setup({})
 
          vim.api.nvim_create_autocmd("LspAttach", {
             callback = function(args)
@@ -75,7 +80,7 @@ return {
                vim.keymap.set("n", "<leader>la", function() vim.lsp.buf.code_action() end, opts)
                vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
                vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-               vim.keymap.set("n", "<leader>le", function() vim.lsp.diagnostic.open_float() end, opts)
+               vim.keymap.set("n", "<leader>le", function() vim.diagnostic.open_float() end, opts)
                vim.keymap.set({ "n", "i" }, "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 
                local client = vim.lsp.get_client_by_id(args.data.client_id)

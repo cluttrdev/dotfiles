@@ -23,6 +23,10 @@ require("lazy").setup({
     -- import plugins from plugins/ directory
     { import = "plugins" },
   },
-  -- automatically check for plugins updates
-  checker = { enabled = true },
+  checker = {
+      -- automatically check for plugins updates
+      enabled = true,
+      -- disable notification pop-up
+      notify = false,
+   },
 })

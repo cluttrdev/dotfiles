@@ -18,6 +18,7 @@ return {
           "dockerfile",
           "git_config", "git_rebase", "gitcommit", "gitignore",
           "go", "gotmpl",
+          "graphql",
           "hcl",
           "html",
           "javascript",
